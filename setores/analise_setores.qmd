@@ -1,0 +1,1295 @@
+---
+title: " <img src ='logo2.png' height='60'> Relatório: Análise Dos Setores"
+author: 'Núcleo de Dados <br><span style = "font-size: 110%;">ADEPE<br><a href="https://github.com/dteconometrics">`r fontawesome::fa("github", fill = "#282f6b")`</a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/">`r fontawesome::fa("linkedin", fill = "#282f6b")`</a>&nbsp; <a href="mailto:vinicius.valenca@adepe.pe.gov.br">`r fontawesome::fa("envelope", fill = "#282f6b")`</a>&nbsp; <a href="https://www.adepe.pe.gov.br/">`r fontawesome::fa("home", fill = "#282f6b")`</a></span>'
+date: "2024-08-28"
+lang: pt
+format: 
+  html:
+    toc: true  # Ativa o índice
+    toc-location: right
+    toc-depth: 3 
+    theme: Morph
+    page-layout: full
+    css: styles.css 
+    fig-width: 4.5
+    fig-height: 3
+    fig-dpi: 600
+execute:
+  echo: false
+  warning: false
+  message: false   # não exibe avisos resultantes de código
+---
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+## Pacotes -------------
+
+## Pacotes ----
+
+library(tidyverse)
+library(lubridate)
+library(tstools)
+library(sidrar)
+library(zoo)
+library(scales)
+library(gridExtra)
+library(timetk)
+library(knitr)
+library(Quandl)
+library(knitr)
+library(ggthemes)
+library(rbcb)
+library(kableExtra)
+library(sidrar)
+library(skimr)
+library(feasts)
+library(patchwork)
+
+
+## Fontes ------
+foot_ibge <- "Fonte: ADEPE com dados do IBGE"
+foot_mte <- "Fonte: ADEPE com dados do Ministério da Economia."
+foot_bc <- "fonte: ADEPE com dados do Banco Central"
+foot_ibge <- "fonte: ADEPE com dados do IBGE"
+foot_bc_ibge <- "fonte: ADEPE com dados do IBGE/BCB"
+
+
+# Acumular  valores percentuais em 'n' janelas móveis
+acum_i <- function(data, n){
+  
+  data_ma_n <- RcppRoll::roll_meanr(data, n)
+  
+  data_lag_n <- dplyr::lag(data_ma_n, n)
+  
+  data_acum_n = (((data_ma_n/data_lag_n)-1)*100)
+  
+  return(data_acum_n)
+  
+}
+colours <- c("#428953", "#CE2929", "#A3DD57", "#77E599","#5774dd", "#c0c4d1", "#d0d1c0", "#50c76d")
+
+
+colours <- c("#428953", "#CE2929", "#A3DD57", "#77E599", "#5675D6", "#65ECEF", "#FF8B07", "#D0B100", "#636363", 
+             "#BB80FF", "#FFD700", "#0099CC", "#FF33CC", "#FF6699", "#66FF66", "#990000", "#FF6600", "#009966", 
+             "#3366FF", "#9900CC", "#660033","#334a15")
+
+
+names <- c('date', 'receita', 'volume', 'receita_sa', 'volume_sa')
+
+```
+
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+# Contas Nacionais Trimestrais 
+
+
+# Coleta dos Dados 
+
+## Contas Nacionais Trimestrais --------------
+
+### Pib com Ajuste Sazonal 
+
+pib_sa = '/t/1621/n1/all/v/all/p/all/c11255/90707/d/v584%202' %>% 
+  get_sidra(api = .) %>% 
+  dplyr::mutate(date = as.yearqtr (`Trimestre (Código)`, format = '%Y%q'),
+                var_marginal = (Valor/lag(Valor,1)-1)*100) %>% 
+  dplyr::select(date, Valor, var_marginal) %>% 
+  rename(pib_sa = Valor) %>% 
+  as_tibble()
+
+### PIB sem ajuste Sazonal 
+
+
+pib = '/t/1620/n1/all/v/all/p/all/c11255/90707/d/v583%202' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  dplyr::mutate(date = as.yearqtr(`Trimestre (Código)`, format = '%Y%q'), 
+         var_interanual = (Valor/lag(Valor,4)-1)*100,
+         var_anual = acum_i(Valor,4)) %>% 
+  dplyr::select(date, Valor, var_interanual, var_anual) %>% 
+  rename(pib = Valor) %>% 
+  as_tibble()
+  
+
+### Juntar os Dados 
+
+df_pib = inner_join(pib_sa, pib, by = 'date') %>% 
+  drop_na()
+
+tema <- ggthemes::theme_excel_new()
+
+
+## Variação Por Setores 
+
+
+## Dados sem ajuste sazonal
+tabela = get_sidra(api='/t/1620/n1/all/v/all/p/all/c11255/all/d/v583%202') %>%
+  mutate(date = as.yearqtr(`Trimestre (Código)`, format='%Y%q')) %>%
+  dplyr::select(date, `Setores e subsetores`, Valor) %>%
+  tidyr::pivot_wider(id_cols = date, names_from = `Setores e subsetores`, values_from = Valor) %>%
+  rename(`Consumo do Governo` = `Despesa de consumo da administração pública`,
+         `Eletricidade` = `Eletricidade e gás, água, esgoto, atividades de gestão de resíduos`,
+         ) %>%
+  as_tibble()
+
+## Dados com ajuste sazonal
+tabela_sa = get_sidra(api='/t/1621/n1/all/v/all/p/all/c11255/all/d/v584%202') %>%
+  mutate(date = as.yearqtr(`Trimestre (Código)`, format='%Y%q')) %>%
+  dplyr::select(date, `Setores e subsetores`, Valor) %>%
+  spread(`Setores e subsetores`, Valor) %>%
+  rename(`Consumo do Governo` = `Despesa de consumo da administração pública`) %>%
+  as_tibble()
+
+## Variação na Margem
+tabela_sa_ts = ts(tabela_sa[,-1], start=c(year(tabela_sa$date[1]), quarter(tabela_sa$date[1])), freq=4)
+margem = (tabela_sa_ts/stats::lag(tabela_sa_ts,-1)-1)*100 
+colnames(margem) <- colnames(tabela_sa[,-1])
+margem = tk_tbl(margem, preserve_index = TRUE, 
+                     rename_index = 'date') 
+margem_long_cnt = margem %>%
+  gather(variavel, valor, -date)
+
+## Variação Interanual
+tabela_ts = ts(tabela[,-1], start=c(year(tabela$date[1]), quarter(tabela$date[1])), freq=4)
+interanual = (tabela_ts/stats::lag(tabela_ts,-4)-1)*100 
+colnames(interanual) <- colnames(tabela[,-1])
+interanual = tk_tbl(interanual, preserve_index = TRUE, 
+                        rename_index = 'date')
+interanual_long_cnt = interanual %>%
+  gather(variavel, valor, -date)
+
+
+## Variação acumulada em quatro trimestres
+anual_cnt = acum_i(tabela_ts,4) %>%
+  as_tibble() %>%
+  mutate(date = tabela$date) %>%
+  drop_na() %>%
+  dplyr::select(date, everything()) 
+
+anual_long_cnt = anual_cnt %>%
+  gather(variavel, valor, -date)
+
+
+
+
+
+```
+
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+
+# Pesquisa Mensal da Industria -------------------------------
+
+
+#Número-Indice com Ajuste Sazonal para Pernambuco
+
+pim_pf_pe_sa = sidrar::get_sidra(api='/t/8888/n3/26/v/12607/p/all/c544/129314/d/v12607%205') %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  as_tibble()
+
+
+# Número-Indice sem ajuste sazonal de Pernambuco 
+
+pim_pf_pe = sidrar::get_sidra(api= '/t/8888/n3/26/v/12606/p/all/c544/56689,129314,129316,129317,129318,129320,129324,129331,129332,129333,129334,129336,129338,129339/d/v12606%205') %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format='%Y%m')) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  dplyr::select(-'3.13 Fabricação de produtos têxteis', -'3.17 Fabricação de celulose, papel e produtos de papel',-'3.22 Fabricação de produtos de borracha e de material plástico', -'3.24 Metalurgia', -'3.27 Fabricação de máquinas, aparelhos e materiais elétricos',-'3.29 Fabricação de veículos automotores, reboques e carrocerias', -'3.30 Fabricação de outros equipamentos de transporte, exceto veículos automotores') %>% 
+  dplyr::select(-'3.20 Fabricação de produtos químicos') %>% 
+  as_tibble() %>% 
+  drop_na()
+
+#Número-Indice com Ajuste Sazonal nível Brasil
+
+tabela_sa = get_sidra(api='/t/8888/n1/all/v/12607/p/last%20182/c544/all/d/v12607%205') %>%
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format='%Y%m')) %>%
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  as_tibble()
+
+#Número-Indice sem Ajuste Sazonal nível Brasil
+
+## Número-Indice sem ajuste sazonal
+tabela = get_sidra(api='/t/8888/n1/all/v/12606/p/last%20182/c544/all/d/v12606%205') %>%
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format='%Y%m')) %>%
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  as_tibble() 
+
+
+
+## Metricas PIM-PF ------------------------
+
+
+
+## Variação na Margem de PE 
+pim_pf_pe_ts = ts(pim_pf_pe_sa[,-1], start=c(year(pim_pf_pe_sa$date[1]),
+                                          month(pim_pf_pe_sa$date[1])), freq=12)
+
+
+#margem_pe_sa = (pim_pf_pe_ts/stats::lag(pim_pf_pe_ts,-1)-1)*100 
+#colnames(margem_pe_sa) <- colnames(pim_pf_pe[,-1])
+#margem_pe_sa = tk_tbl(margem_pe_sa, preserve_index = TRUE, 
+#                     rename_index = 'date') 
+#margem_long_pe_sa = margem_pe_sa %>%
+ # gather(variavel, value, -date)
+
+## Variação Interanual de PE 
+pim_pf_pe_ts2 = ts(pim_pf_pe[,-1], start=c(year(pim_pf_pe$date[1]),
+                                    month(pim_pf_pe$date[1])), freq=12)
+interanual_pe = (pim_pf_pe_ts2/stats::lag(pim_pf_pe_ts2,-12)-1)*100 
+colnames(interanual_pe) <- colnames(pim_pf_pe[,-1])
+interanual_pe = tk_tbl(interanual_pe, preserve_index = TRUE, 
+                        rename_index = 'date')
+interanual_long_pe = interanual_pe %>%
+  gather(variavel, valor, -date)
+
+## Variação acumulada em 12 meses
+anual_pe = acum_i(pim_pf_pe_ts2,12) %>%
+  as_tibble() %>%
+  mutate(date = pim_pf_pe$date) %>%
+  drop_na() %>%
+  dplyr::select(date, everything()) 
+
+anual_long_pe = anual_pe %>%
+  gather(variavel, valor, -date)
+
+
+
+## Nível Brasil 
+
+
+## Variação na Margem
+tabela_sa_ts = ts(tabela_sa[,-1], start=c(year(tabela_sa$date[1]),
+                                          month(tabela_sa$date[1])), freq=12)
+
+
+margem = (tabela_sa_ts/stats::lag(tabela_sa_ts,-1)-1)*100 
+colnames(margem) <- colnames(tabela_sa[,-1])
+margem = tk_tbl(margem, preserve_index = TRUE, 
+                     rename_index = 'date') 
+margem_long = margem %>%
+  gather(variavel, valor, -date)
+
+## Variação Interanual
+tabela_ts = ts(tabela[,-1], start=c(year(tabela$date[1]),
+                                    month(tabela$date[1])), freq=12)
+interanual = (tabela_ts/stats::lag(tabela_ts,-12)-1)*100 
+colnames(interanual) <- colnames(tabela[,-1])
+interanual = tk_tbl(interanual, preserve_index = TRUE, 
+                        rename_index = 'date')
+interanual_long = interanual %>%
+  gather(variavel, valor, -date)
+
+
+## Variação acumulada em 12 meses
+anual = acum_i(tabela_ts,12) %>%
+  as_tibble() %>%
+  mutate(date = tabela$date) %>%
+  drop_na() %>%
+  dplyr::select(date, everything()) 
+
+anual_long = anual %>%
+  gather(variavel, valor, -date)
+
+
+# Pesquisa Mensal da Indústria ----- 
+
+
+# Pesquisa De Pernambuco ----------------------
+## Com Ajuste Sazonal 
+pim_atv_sa = get_sidra(api='/t/8888/n3/26/v/12606/p/all/c544/129314,129317,129318,129324,129326,129331,129333,129334,129336,129338,129339/d/v12606%205') %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  drop_na() %>% 
+  as_tibble()
+
+## Sem Ajuste Sazonal 
+
+names <- c("date", "Indústria geral", "Indústria de transformação", "produtos alimentícios", "Fabricação de bebidas", "Celulose, Papel e produtos de Papel", "Coque, derivados de petróleo e biocombustíveis", "Borracha e material Plástico", "Metalurgia", "metal, exceto máquinas e equipamentos", "Aparelhos e Materiais elétricos", "Veículos Automotores, Reboques e Carrocerias", "Outros Equipamentos de Transporte, Exceto Veículos Automotores")
+
+pim_atv = get_sidra(api = '/t/8888/n3/26/v/12606/p/all/c544/129314,129316,129317,129318,129324,129326,129331,129333,129334,129336,129338,129339/d/v12606%205') %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  drop_na() %>% 
+  `names<-`(names) %>% 
+  as_tibble()
+
+# Calculando Metricas PE ------------------
+
+## Variação na Margem 
+
+
+pim_atv_ts = ts(pim_atv_sa[,-1], start = c(year(pim_atv_sa$date[1]),
+                                           month(pim_atv_sa$date[1])), frequency = 12)
+
+margem_atv = (pim_atv_ts/stats::lag(pim_atv_ts,-1)-1)*100
+colnames(margem_atv) <- colnames(pim_atv_sa[,-1])
+margem_atv = tk_tbl(margem_atv, preserve_index = TRUE,
+                    rename_index = 'date')
+
+
+margem_long_atv = margem_atv %>% 
+  gather(variavel, valor, -date)
+
+## Variaççao Interanual 
+
+atv_ts = ts(pim_atv[,-1], start = c(year(pim_atv$date[1]),
+                                    month(pim_atv$date[1])), frequency = 12)
+
+
+interanual_atv = (atv_ts/stats::lag(atv_ts,-12)-1)*100
+colnames(interanual_atv) <- colnames(pim_atv[,-1])
+
+interanual_atv = tk_tbl(interanual_atv, preserve_index = TRUE,
+                        rename_index = 'date')
+
+interanual_long_atv = interanual_atv %>% 
+  gather(variavel, valor, -date)
+
+## Variação Acumulada em 12 Meses 
+
+anual_atv = acum_i(atv_ts,12)
+
+
+# Pesquisa Industrial Mensal
+
+names <- c('date', 'receita', 'volume', 'receita_sa', 'volume_sa')
+
+foot_ibge <- "Fonte: ADEPE com dados do IBGE"
+
+## Coleta e Tratamento Nível Brasil---------------------
+
+
+## Com Ajuste Sazonal 
+
+pim_sa = '/t/8888/n1/all/v/12607/p/last%20182/c544/all/d/v12607%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>% 
+  as_tibble()
+  
+
+## Sem Ajuste Sazonal 
+
+
+pim = get_sidra(api='/t/8888/n1/all/v/12606/p/last%20182/c544/all/d/v12606%205') %>%
+  mutate(date = parse_date(`Mês (Código)`, format='%Y%m')) %>%
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  spread("Seções e atividades industriais (CNAE 2.0)", Valor) %>%
+  as_tibble() 
+
+
+
+## Transformação em ST 
+
+
+pim_sa_ts = ts(pim_sa[,-1], start = c(year(pim_sa$date[1]),
+                                      month(pim_sa$date[1])), frequency = 12)
+
+## Variação na Margem Brasil -------------
+margem = (pim_sa_ts/stats::lag(pim_sa_ts,-1)-1)*100
+colnames(margem) <- colnames(pim_sa[,-1])
+margem = tk_tbl(margem, preserve_index = TRUE,
+                rename_index = 'date')
+
+## Formato Long 
+
+
+margem_long = margem %>% 
+  gather(variavel, valor, -date)
+
+
+
+## Variaão Interanual Brasil ------------------------
+
+pim_ts = ts(pim[,-1], start = c(year(pim$date[1]),
+                                month(pim$date[1])), frequency = 12)
+
+interanual = (pim_ts/stats::lag(pim_ts,-12)-1)*100
+colnames(interanual) <- colnames(pim[,-1])
+
+interanual = tk_tbl(interanual, preserve_index = TRUE,
+                    rename_index = 'date')
+
+interanual_long = interanual %>% 
+  gather(variavel, valor, -date)
+
+
+## Variação acumulada em 12 meses Brasil ------ 
+anual = acum_i(pim_ts,12) %>%
+  as_tibble() %>%
+  mutate(date = pim$date) %>%
+  drop_na() %>%
+  dplyr::select(date, everything()) 
+
+anual_long = anual %>%
+  gather(variavel, valor, -date)
+
+
+## Nivel Pe e Nordeste ------------------
+
+
+## Coleta e Tratamento dos Dados ------------------
+
+names <- c("date", "pim_sa_pe")
+
+## Produção Industrial índice e SA
+
+pim_pe_sa = '/t/8888/n3/26/v/12607/p/all/c544/129314/d/v12607%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = "%Y%m")) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(names) %>% 
+  as_tibble() %>% 
+  drop_na()
+
+pim_pe = '/t/8888/n3/26/v/12606/p/all/c544/129314/d/v12606%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = "%Y%m")) %>% 
+  dplyr::select(date,"Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(c('date', 'pim_pe'))
+
+
+## Produção Ceara Sa e indice 
+
+
+pim_ce_sa = '/t/8888/n3/23/v/12607/p/all/c544/129314/d/v12607%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date,"Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(c('date',"pim_ce_sa")) %>% 
+  as_tibble() %>% 
+  drop_na()
+
+
+pim_ce = '/t/8888/n3/23/v/12606/p/all/c544/129314/d/v12606%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date,"Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(c('date', 'pim_ce')) %>% 
+  as_tibble() %>% 
+  drop_na()
+
+## Produção Bahia SA e Indice 
+
+
+pim_ba_sa = '/t/8888/n3/29/v/12607/p/all/c544/129314/d/v12607%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date,"Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>%
+  `colnames<-`(c('date', 'pim_ba_sa')) %>% 
+  as_tibble() %>% 
+  drop_na()
+  
+
+pim_ba = '/t/8888/n3/29/v/12606/p/all/c544/129314/d/v12606%205'  %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date,"Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(c('date', 'pim_ba')) %>% 
+  as_tibble() %>% 
+  drop_na()
+
+
+## Nível Nordeeste 
+
+names_2 <- c('date', 'pim_ne')
+
+pim_ne_sa = '/t/8888/n2/all/v/12607/p/all/c544/129314/d/v12607%205' %>% 
+  get_sidra(api =.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(c('date', 'pim_ne_sa')) %>% 
+  as_tibble()
+
+
+
+
+pim_ne = '/t/8888/n2/all/v/12606/p/all/c544/56689,129314,129315,129316,129317,129318,129324,129326,129331,129332,129333,129334,129336,129338,129339/d/v12606%205' %>% 
+  get_sidra(api = .) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>%
+  dplyr::select(date, "Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  spread("Seções e atividades industriais (CNAE 2.0) (Código)", Valor) %>% 
+  `colnames<-`(names_2) %>% 
+  dplyr::select(date, pim_ne) %>% 
+  as_tibble()
+
+
+## Juntando os dados 
+
+
+dados_sa = pim_pe_sa %>% 
+  inner_join(pim_ce_sa, by = 'date') %>% 
+  inner_join(pim_ba_sa, by= 'date') %>% 
+  inner_join(pim_ne_sa, by = 'date')
+
+
+dados = pim_pe %>% 
+  inner_join(pim_ce, by = 'date') %>% 
+  inner_join(pim_ba, by = 'date') %>% 
+  inner_join(pim_ne, by = 'date')
+
+## Transformando em St -------------- 
+
+
+## Variação na Margem de nordeste 
+
+
+dados_sa_ts = ts(dados_sa[,-1], start = c(year(dados_sa$date[1]),
+                                          month(dados_sa$date[1])), frequency = 12)
+
+
+## Varição na Margem -----------
+
+margem_data = (dados_sa_ts/stats::lag(dados_sa_ts,-1)-1)*100
+
+colnames(margem_data) <- colnames(dados_sa[,-1])
+
+margem_data = tk_tbl(margem_data, preserve_index = TRUE,
+                     rename_index = 'date')
+
+## Formato Long 
+
+margem_data_long = margem_data %>% 
+  gather(variavel, valor, -date)
+
+
+## Variação Interanual -----------------------
+
+
+dados_ts = ts(dados[,-1], start = c(year(dados$date[1]),
+                                    month(dados$date[1])), frequency = 12)
+
+interanual_data = (dados_ts/stats::lag(dados_ts, -12)-1)*100
+colnames(interanual_data) <- colnames(dados[,-1])
+
+interanual_data = tk_tbl(interanual_data, preserve_index = TRUE,
+                         rename_index = 'date')
+
+interanual_data_long = interanual_data %>% 
+  gather(variavel, valor, -date)
+
+
+## Variação Acumulada em 12 Meses ------------
+
+anual_data = acum_i(dados_ts,12) %>% 
+  as_tibble() %>% 
+  mutate(date = dados$date) %>% 
+  drop_na() %>% 
+  dplyr::select(date, everything())
+
+
+anual_data_long = anual_data %>% 
+  gather(variavel, valor, -date)
+
+
+
+
+
+
+
+
+```
+
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+## PMS 
+
+## PMS Nacional -------------------
+
+names <- c('date', 'receita', 'volume', 'receita_sa', 'volume_sa')
+
+## Coleta e Tratamento dos Dados --------------------
+
+tabpms = '/t/5906/n1/all/v/7167,7168/p/all/c11046/all/d/v7167%205,v7168%205' %>% 
+  sidrar::get_sidra(api = .) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Variável", "Tipos de índice", Valor) %>% 
+  pivot_wider(id_cols = date,
+              names_from = c("Variável", "Tipos de índice"),
+              values_from = Valor) %>% 
+  `colnames<-`(names) %>% 
+  dplyr::select(date, receita, receita_sa, volume, volume_sa) %>% 
+  as_tibble()
+
+
+
+## Criar métricas --------------
+tabpms =
+  tabpms %>%
+  mutate(margem_receita = (receita_sa/lag(receita_sa,1)-1)*100) %>%
+  mutate(margem_volume = (volume_sa/lag(volume_sa,1)-1)*100) %>%
+  mutate(interanual_receita = (receita/lag(receita,12)-1)*100) %>%
+  mutate(interanual_volume = (volume/lag(volume,12)-1)*100) %>%
+  mutate(anual_receita = acum_i(receita,12)) %>%
+  mutate(anual_volume = acum_i(volume,12))
+
+## Wide para long
+tabpms_long =
+  tabpms %>%
+  gather(variavel, valor, -date)
+
+
+# PMS Pernambuco ----------------
+
+
+tabpms_pe = '/t/5906/n3/26/v/7167,7168/p/all/c11046/all/d/v7167%205,v7168%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, "Variável", "Tipos de índice", Valor) %>% 
+  pivot_wider(id_cols = date, 
+              names_from = c("Variável", "Tipos de índice"),
+              values_from = Valor) %>% 
+  `colnames<-`(names) %>% 
+  dplyr::select(date, receita, receita_sa, volume, volume_sa) %>% 
+  as_tibble()
+
+
+## Criar métricas -------------------
+  
+tabpms_pe =
+  tabpms_pe %>%
+  mutate(margem_receita = (receita_sa/lag(receita_sa,1)-1)*100) %>%
+  mutate(margem_volume = (volume_sa/lag(volume_sa,1)-1)*100) %>%
+  mutate(interanual_receita = (receita/lag(receita,12)-1)*100) %>%
+  mutate(interanual_volume = (volume/lag(volume,12)-1)*100) %>%
+  mutate(anual_receita = acum_i(receita,12)) %>%
+  mutate(anual_volume = acum_i(volume,12))
+
+## Wide para long
+tabpms_long =
+  tabpms_pe %>%
+  gather(variavel, valor, -date)
+
+## Setores PMS de Pernamnuco 
+
+## Atividades - Receita (Interanual)
+
+pms_setores_inter_rec = "/t/8693/n3/26/v/11624/p/all/c11046/56725/c12355/all/d/v11624%201" %>% 
+  get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, "Atividades de serviços") %>% 
+  tidyr::pivot_wider(id_cols = date, names_from = "Atividades de serviços", values_from = Valor) %>% 
+  select(-Total) %>% 
+  drop_na() %>% 
+  as_tibble()
+  
+  
+pms_setores_anul_rec = "/t/8693/n3/26/v/11625/p/all/c11046/56725/c12355/all/d/v11625%201" %>% 
+  get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, "Atividades de serviços") %>% 
+  tidyr::pivot_wider(id_cols = date, names_from = "Atividades de serviços", values_from = Valor) %>% 
+  select(-Total) %>% 
+  drop_na() %>% 
+  as_tibble()
+
+
+## Atividades -  Volume  (Interanual)
+
+pms_setores_inter_vol = "/t/8693/n3/26/v/11624/p/all/c11046/56726/c12355/all/d/v11624%201" %>% 
+  get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, "Atividades de serviços") %>% 
+  tidyr::pivot_wider(id_cols = date, names_from = "Atividades de serviços", values_from = Valor) %>% 
+  select(-Total) %>% 
+  drop_na() %>% 
+  as_tibble()
+
+
+pms_setores_anual_vol = "/t/8693/n3/26/v/11625/p/all/c11046/56726/c12355/all/d/v11625%201" %>% 
+  get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, "Atividades de serviços") %>% 
+  tidyr::pivot_wider(id_cols = date, names_from = "Atividades de serviços", values_from = Valor) %>% 
+  select(-Total) %>% 
+  drop_na() %>% 
+  as_tibble()
+
+## Formato Long 
+
+pms_setores_inter_rec_long =
+   pms_setores_inter_rec %>%
+  gather(variavel, valor, -date)
+
+
+pms_setores_inter_vol_long = 
+  pms_setores_inter_vol %>% 
+  gather(variavel, valor, -date)
+
+```
+
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+# DADOS da PMC
+
+## Coleta e Tratamento dos Dados 
+
+ampliado = '/t/8881/n1/all/v/7169,7170/p/all/c11046/all/d/v7169%205,v7170%205' %>% 
+  sidrar::get_sidra(api =.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = "%Y%m")) %>% 
+  dplyr::select(`Variável`, date, `Tipos de índice`, Valor) %>% 
+  spread(`Variável`, Valor) %>% 
+  pivot_wider(id_cols = date,
+              names_from = 'Tipos de índice',
+              values_from = c('PMC - Número-índice (2022=100)',
+                              'PMC - Número-índice com ajuste sazonal (2022=100)')) %>% 
+  `colnames<-`(names) %>% 
+   dplyr::select(date, receita, receita_sa, volume, volume_sa) %>% 
+   tibble::as_tibble()
+  
+
+## Metricas 
+
+
+ampliado = 
+  ampliado %>%
+  mutate(margem_receita = (receita_sa/lag(receita_sa,1)-1)*100) %>%
+  mutate(margem_volume = (volume_sa/lag(volume_sa,1)-1)*100) %>%
+  mutate(interanual_receita = (receita/lag(receita,12)-1)*100) %>%
+  mutate(interanual_volume = (volume/lag(volume,12)-1)*100) %>%
+  mutate(anual_receita = acum_i(receita,12)) %>%
+  mutate(anual_volume = acum_i(volume,12))
+
+
+## Transformar de wide para long
+ampliado_long = 
+  ampliado %>%
+  gather(variavel, valor, -date)
+
+
+## Coleta e Tratamento --------------------------
+
+names <- c('date', 'receita', 'volume', 'receita_sa', 'volume_sa')
+
+restrito_br = '/t/8880/n1/all/v/7169,7170/p/all/c11046/all/d/v7169%205,v7170%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = "%Y%m")) %>% 
+  select(`Variável`, date, `Tipos de índice`, Valor) %>% 
+  spread(`Variável`, Valor) %>% 
+  pivot_wider(id_cols = date, 
+              names_from = 'Tipos de índice',
+              values_from = c('PMC - Número-índice (2022=100)',
+                              'PMC - Número-índice com ajuste sazonal (2022=100)')) %>% 
+  `colnames<-`(names) %>% 
+  dplyr::select(date, receita, receita_sa, volume, volume_sa)
+
+## Calcular Métricas --------------------- 
+
+restrito_br = restrito_br %>% 
+  mutate(margem_receita = (receita_sa/lag(receita_sa,1)-1)*100) %>%
+  mutate(margem_volume = (volume_sa/lag(volume_sa,1)-1)*100) %>%
+  mutate(interanual_receita = (receita/lag(receita,12)-1)*100) %>%
+  mutate(interanual_volume = (volume/lag(volume,12)-1)*100) %>%
+  mutate(anual_receita = acum_i(receita,12)) %>%
+  mutate(anual_volume = acum_i(volume,12))
+
+
+## Formato long 
+
+restrito_br_long = restrito_br %>% 
+  gather(variavel, valor, -date)
+
+
+## Coleta e Tratamento dos Dados ---------------------
+
+ampliado_pe = '/t/8881/n3/26/v/7169,7170/p/all/c11046/all/d/v7169%205,v7170%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  select(`Variável`, date, `Tipos de índice`, Valor) %>% 
+  spread(`Variável`, Valor) %>% 
+  pivot_wider(id_cols = date,
+              names_from = 'Tipos de índice',
+              values_from = c('PMC - Número-índice (2022=100)',
+                              'PMC - Número-índice com ajuste sazonal (2022=100)')) %>% 
+  `colnames<-`(names) %>% 
+  dplyr::select(date, receita, receita_sa, volume, volume_sa) %>% 
+  as_tibble()
+
+
+
+## Criar métricas de variação do Comércio ampliado ------------
+
+ampliado_pe = 
+  ampliado_pe %>%
+  mutate(margem_receita = (receita_sa/lag(receita_sa,1)-1)*100) %>%
+  mutate(margem_volume = (volume_sa/lag(volume_sa,1)-1)*100) %>%
+  mutate(interanual_receita = (receita/lag(receita,12)-1)*100) %>%
+  mutate(interanual_volume = (volume/lag(volume,12)-1)*100) %>%
+  mutate(anual_receita = acum_i(receita,12)) %>%
+  mutate(anual_volume = acum_i(volume,12))
+
+
+## Transformar de wide para long --------------
+ampliado_long_pe = 
+  ampliado_pe %>%
+  gather(variavel, valor, -date)
+
+
+# Coleta e Tratamento ----------------
+
+restrito_pe = '/t/8880/n3/26/v/7169,7170/p/all/c11046/all/d/v7169%205,v7170%205' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(`Variável`, date, `Tipos de índice`, Valor) %>% 
+  spread(`Variável`, Valor) %>% 
+  pivot_wider(id_cols = date, 
+              names_from = 'Tipos de índice',
+              values_from = c('PMC - Número-índice (2022=100)',
+                              'PMC - Número-índice com ajuste sazonal (2022=100)')) %>% 
+  `colnames<-`(names) %>% 
+  select(date, receita, receita_sa, volume, volume_sa) %>% 
+  as_tibble()
+  
+## Metricas -----------------
+
+## Criar métricas de variação do Comércio Restrito
+restrito_pe = 
+  restrito_pe %>%
+  mutate(margem_receita = (receita_sa/lag(receita_sa,1)-1)*100) %>%
+  mutate(margem_volume = (volume_sa/lag(volume_sa,1)-1)*100) %>%
+  mutate(interanual_receita = (receita/lag(receita,12)-1)*100) %>%
+  mutate(interanual_volume = (volume/lag(volume,12)-1)*100) %>%
+  mutate(anual_receita = acum_i(receita,12)) %>%
+  mutate(anual_volume = acum_i(volume,12))
+
+## Transformar de wide para long
+restrito_long_pe = 
+  restrito_pe %>%
+  gather(variavel, valor, -date)
+
+
+# Resultado por setor  
+
+## Margem Volume e Receita 
+
+margem_setor_receita = '/t/8883/n3/26/v/11709/p/all/c11046/56735/c85/all/d/v11709%201' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, Atividades) %>% 
+  drop_na() %>% 
+  dplyr::rename(margem_receita = Valor) %>% 
+  as_tibble()
+
+margem_setor_volume = '/t/8883/n3/26/v/11709/p/all/c11046/56736/c85/all/d/v11709%201' %>% 
+  sidrar::get_sidra(api = .) %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, Atividades) %>% 
+  drop_na() %>% 
+  dplyr::rename(margem_volume = Valor) %>% 
+  as_tibble()
+  
+
+setor_margem = inner_join(margem_setor_receita, margem_setor_volume, by = c("date", "Atividades")) %>% 
+  dplyr::select(date, Atividades, margem_receita, margem_volume)
+
+
+## Variação Interanual Volume e Receita 
+
+
+interanual_setor_receita = '/t/8883/n3/26/v/11710/p/all/c11046/56735/c85/all/d/v11710%201' %>% 
+  sidrar::get_sidra(api = .)%>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, Atividades) %>% 
+  drop_na() %>% 
+  dplyr::rename(interanual_receita = Valor) %>% 
+  as_tibble()
+
+
+interanual_setor_volume = '/t/8883/n3/26/v/11710/p/all/c11046/56736/c85/all/d/v11710%201' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, Atividades) %>% 
+  drop_na() %>% 
+  dplyr::rename(interanual_volume = Valor) %>% 
+  as_tibble()
+
+
+
+setor_interanual = inner_join(interanual_setor_receita, interanual_setor_volume, by = c("date", "Atividades")) %>% 
+  dplyr::select(date, Atividades, interanual_receita, interanual_volume)
+
+
+
+## Variação Anual Volume e Receita 
+
+
+anual_setor_receita = '/t/8883/n3/26/v/11711/p/all/c11046/56735/c85/all/d/v11711%201' %>% 
+  sidrar::get_sidra(api = .)%>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, Atividades) %>% 
+  drop_na() %>% 
+  dplyr::rename(anual_receita = Valor) %>% 
+  as_tibble()
+
+
+anual_setor_volume = '/t/8883/n3/26/v/11711/p/all/c11046/56736/c85/all/d/v11711%201' %>% 
+  sidrar::get_sidra(api=.) %>% 
+  dplyr::mutate(date = parse_date(`Mês (Código)`, format = '%Y%m')) %>% 
+  dplyr::select(date, Valor, Atividades) %>% 
+  drop_na() %>% 
+  dplyr::rename(anual_volume = Valor) %>% 
+  as_tibble()
+
+
+
+setor_anual = inner_join(anual_setor_receita, anual_setor_volume, by = c("date", "Atividades")) %>% 
+  dplyr::select(date, Atividades, anual_receita, anual_volume)
+
+
+```
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+
+
+
+
+```
+
+
+::: {.grid}
+
+::: {.g-col-9}
+
+
+## Introdução 
+
+- Este relatório tem como objetivo analisar a evolução dos setores econômicos a partir das pesquisas divulgadas pelo IBGE. Busca-se observar a evolução desses setores ao longo do tempo, bem como as tendências das variáveis associadas. Além da análise setorial, também será explorada a série temporal da Pesquisa Industrial Mensal (PIM) e da Pesquisa Mensal de Serviços (PMS), com o intuito de identificar o impacto das tendências sazonais sobre essas séries  
+
+::: {.callout-note}
+ 
+**Interaja clicando nas tabelas e gráficos, para visualizar os resultado**
+
+:::
+
+:::
+:::
+
+::: {.grid}
+
+::: {.g-col-9}
+
+## Setores Nacional 
+
+
+- Iniciando pelos resultados macroeconômicos, analisados a partir das Contas Nacionais Trimestrais (CNT), é possível observar o crescimento do PIB nacional e identificar quais setores se destacaram. No acumulado do período analisado, além do crescimento significativo da agropecuária e da indústria extrativa, os setores de serviços, como comércio e exportação de bens e serviços, também apresentaram desempenhos notáveis.
+
+- No entanto, alguns setores nacionais apresentaram resultados negativos no acumulado. A construção civil registrou uma queda de -0,30\OO%, a indústria de transformação teve um crescimento modesto de 0,63\%, e a Formação Bruta de Capital Físico (FBCF) caiu significativamente, com uma redução de -2,69\%
+
+
+
+
+::: panel-tabset 
+### Componentes do PIB
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=5, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+## Visualização dos dados
+
+filter(anual_long_cnt, date > '2014 Q1' &
+         variavel %in% c("Agropecuária - total", "Indústria - total", "Indústrias de transformação", "Eletricidade", "Construção", "Serviços - total", "Comércio", "Transporte, armazenagem e correio")) %>%  
+  ggplot(aes(x=date, y=valor, colour=variavel)) +
+  geom_line(aes(fill=variavel, colour=variavel), stat='identity') +
+  scale_fill_manual(values=colours) +
+  scale_colour_manual(values=colours) +
+  geom_hline(yintercept=0, colour='black', linetype='dashed') +
+  facet_wrap(~variavel, scales = 'free') +
+  theme_excel_new() +
+  theme(legend.position = 'none',
+        strip.text = element_text(size=7, face='bold'),
+        axis.text.x = element_text(size=6),
+        plot.title = element_text(size=10, face='bold'),
+        plot.subtitle = element_text(size=8, face='italic')) +
+  scale_x_yearqtr(breaks = pretty_breaks(n=4), format = "%YQ%q") +
+  labs(x='', y='',
+       title='Componentes do PIB',
+       subtitle = 'Variação Acumulada ao ano (%)',
+       caption= foot_ibge)
+
+
+
+
+
+```
+
+### Componentes do PIB (2)
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=5, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+## Visualização dos dados
+
+dplyr::filter(anual_long_cnt, date > '2014 Q1' &
+         variavel %in% c("Informação e comunicação", "Atividades financeiras, de seguros e serviços relacionados", "Atividades imobiliárias", "Outras atividades de serviços", "Despesa de consumo das famílias", "Exportação de bens e serviços")) %>%  
+  ggplot(aes(x=date, y=valor, colour=variavel)) +
+  geom_line(aes(fill=variavel, colour=variavel), stat='identity') +
+  scale_fill_manual(values=colours) +
+  scale_colour_manual(values=colours) +
+  geom_hline(yintercept=0, colour='black', linetype='dashed') +
+  facet_wrap(~variavel, scales = 'free') +
+  theme_excel_new() +
+  theme(legend.position = 'none',
+        strip.text = element_text(size=7, face='bold'),
+        axis.text.x = element_text(size=6),
+        plot.title = element_text(size=10, face='bold'),
+        plot.subtitle = element_text(size=8, face='italic')) +
+  scale_x_yearqtr(breaks = pretty_breaks(n=4), format = "%YQ%q") +
+  labs(x='', y='',
+       title='Componentes do PIB',
+       subtitle = 'Variação Acumulada ao ano (%)',
+       caption= foot_ibge)
+
+
+
+
+
+```
+
+:::
+
+
+:::
+:::
+
+::: {.grid}
+
+::: {.g-col-9}
+
+## Setores Estaduais 
+
+- Para entender como os resultados se comportaram dentro do estado, foram utilizadas as Pesquisas Mensais do IBGE, incluindo a Pesquisa Industrial Mensal (PIM), a Pesquisa Mensal de Serviços (PMS), e a Pesquisa Mensal do Comércio (PMC), além do resultado do PIB estadual, também disponibilizado pelo IBGE. No entanto, é importante notar que os dados do PIB estadual possuem uma defasagem de dois anos.
+
+
+
+
+### Setores Na Pim 
+
+- Os resultados dos setores apresentados a seguir referem-se à variação interanual. Nesta análise, não foi considerado o desempenho do mês imediatamente anterior (na margem), devido à alta sazonalidade. Entre os setores que se destacaram, estão a fabricação de bebidas, com um crescimento de 6,5\%, metalurgia, com 6,15\%, e a fabricação de produtos de metal, exceto equipamentos, que apresentou um expressivo aumento de 39\%.  
+
+::: panel-tabset
+
+### Setores da Pim (1)
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=5, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+filter(interanual_long_atv, date > 'fev 2022' &
+         variavel %in% c('Indústria de transformação', 
+                         'produtos alimentícios',
+                         'Fabricação de bebidas', 'Celulose, Papel e produtos de Papel', 'Coque, derivados de petróleo e biocombustíveis')) %>%  
+  ggplot(aes(x=date, y=valor, colour=variavel))+
+  geom_line(aes(fill=variavel, colour=variavel), stat='identity')+
+  scale_fill_manual(values=colours)+
+  scale_colour_manual(values=colours)+
+  geom_hline(yintercept=0, colour='black', linetype='dashed')+
+  facet_wrap(~variavel, scales = 'free')+
+  theme_excel_new()+
+  theme(legend.position = 'none',
+        strip.text = element_text(size=7, face='bold'),
+        axis.text.x = element_text(size=6),
+        plot.title = element_text(size=10, face='bold'),
+        plot.subtitle = element_text(size=8, face='italic'))+
+  scale_x_yearmon(breaks = pretty_breaks(n=4),
+                  format = "%b %Y")+
+  labs(x='', y='',
+       title='Produção Industrial Pernambuco',
+       subtitle = 'Variação contra o mês imediatamente anterior (%)',
+       caption=foot_ibge)
+
+
+
+```
+
+### Setores da Pim (2)
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=5, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+filter(interanual_long_atv, date > 'fev 2022' &
+         variavel %in% c('Borracha e material Plástico', 
+                         'Borracha e material Plástico',
+                         'Metalurgia', 'metal, exceto máquinas e equipamentos', 'Aparelhos e Materiais elétricos', 'Outros Equipamentos de Transporte, Exceto Veículos Automotores')) %>%  
+  ggplot(aes(x=date, y=valor, colour=variavel))+
+  geom_line(aes(fill=variavel, colour=variavel), stat='identity')+
+  scale_fill_manual(values=colours)+
+  scale_colour_manual(values=colours)+
+  geom_hline(yintercept=0, colour='black', linetype='dashed')+
+  facet_wrap(~variavel, scales = 'free')+
+  theme_excel_new()+
+  theme(legend.position = 'none',
+        strip.text = element_text(size=7, face='bold'),
+        axis.text.x = element_text(size=6),
+        plot.title = element_text(size=10, face='bold'),
+        plot.subtitle = element_text(size=8, face='italic'))+
+  scale_x_yearmon(breaks = pretty_breaks(n=4),
+                  format = "%b %Y")+
+  labs(x='', y='',
+       title='Produção Industrial Pernambuco',
+       subtitle = 'Variação contra o mês imediatamente anterior (%)',
+       caption=foot_ibge)
+
+
+
+```
+
+
+:::
+
+
+### Setores na PMS 
+
+- Com essa métrica, é possível analisar o quanto determinado setor aumentou sua receita e volume de vendas ao longo do ano. Do lado da receita, todos os setores apresentaram crescimento em relação ao mesmo período do ano anterior, com destaque para os serviços profissionais, que registraram um aumento de 18\%, e os serviços de informação, com um crescimento de 12\%. Quanto ao volume de vendas, os destaques também vão para esses setores, com aumentos de 11% e aproximadamente 9\%, respectivamente.   
+
+::: panel-tabset
+### Receita
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+pms_setores_inter_rec_long %>%
+  ggplot(aes(x=date, y=valor, colour=variavel))+
+  geom_line(size=.8)+
+  geom_hline(yintercept=0, colour='black', linetype='dashed')+
+  facet_wrap(~variavel, scales='free')+
+  theme_excel_new()+
+  theme(legend.position = 'none')+
+  labs(x='', y='', 
+       title='Pesquisa Mensal de Serviços Receita',
+       caption= foot_ibge)
+```
+
+### Volume 
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+pms_setores_inter_vol_long %>%
+  ggplot(aes(x=date, y=valor, colour=variavel))+
+  geom_line(size=.8)+
+  geom_hline(yintercept=0, colour='black', linetype='dashed')+
+  facet_wrap(~variavel, scales='free')+
+  theme_excel_new()+
+  theme(legend.position = 'none')+
+  labs(x='', y='', 
+       title='Pesquisa Mensal de Serviços Volume',
+       caption= foot_ibge)
+```
+
+
+:::
+
+
+### Setores na PMC 
+
+- A Pesquisa Mensal do Comércio (PMC) revelou variações diversas entre os setores (variação anual). Veículos, motocicletas, partes e peças lideraram com crescimento expressivo de 18\% em volume de vendas e 19\% em receita. Artigos farmacêuticos e livros, jornais e papelaria também se destacaram com aumentos significativos. Por outro lado, equipamentos de informática enfrentaram a maior queda, com uma redução de cerca de 27\% tanto em volume quanto em receita. Setores como hipermercados e supermercados e combustíveis e lubrificantes mostraram crescimento moderado, enquanto tecidos, vestuário e calçados e material de construção registraram quedas.
+
+::: panel-tabset
+### Variação anual (1)
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+# Tabela 1: Últimas 6 observações
+tabela1 <- tail(setor_anual, n = 6)
+
+kable(tabela1,
+      digits = 2,
+      col.names = c("Data", "Setor", "Receita", "Volume"),
+      align = 'c',
+      caption = 'Variação anual por Setor tabela 1')
+```
+
+### Variação Anual (2)
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+tabela2 <- setor_anual[(nrow(setor_anual) - 11):(nrow(setor_anual) - 6), ]
+
+kable(tabela2,
+      digits = 2,
+      col.names = c("Data", "Setor", "Receita", "Volume"),
+      align = 'c',
+      caption = 'Variação Anual por Setor tabela 2')
+```
+
+
+:::
+
+### PIB estadual 
+
+- Durante os períodos analisados no gráfico, a participação do setor de Serviços no PIB pernambucano caiu de 50,83\% em 2019 para 48\% em 2021. Por outro lado, o setor Agropecuário aumentou sua participação de 4,47\% em 2019 para 5,17\% em 2020, embora tenha sofrido uma leve redução em 2021. A Indústria apresentou um crescimento constante, passando de 19,74\% para 21,89\% no mesmo período. O setor Administrativo teve um aumento inicial, mas sua participação caiu de 24,96\% em 2019 para 24,38\% em 2021
+
+::: panel-tabset
+### Setores
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+dados_setores <- data.frame(
+  Setor = c("Serviços", "Agropecuária", "Indústria", "Administrativo", 
+            "Serviços", "Agropecuária", "Indústria", "Administrativo",
+            "Serviços", "Agropecuária", "Indústria", "Administrativo"),
+  Percentual = c(50.83, 4.47, 19.74, 24.96, 
+                 48.42, 5.26, 20.66, 25.66,
+                 48, 5.17, 21.89, 24.38),
+  Ano = c(rep("2019", 4), rep("2020", 4), rep("2021", 4))
+)
+
+# Criar o gráfico de barras
+ggplot(dados_setores, aes(x = Setor, y = Percentual, fill = Ano)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = sprintf("%.2f", Percentual)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5,
+            size = 2) +
+  labs(title = "Comparação do PIB por Setor: 2019, 2020 e 2021",
+       x = "Setor",
+       y = "Percentual (%)") +
+  theme_excel_new() +
+  scale_fill_manual(values = c("2019" = "lightblue", "2020" = "skyblue", "2021" = "royalblue")) +
+  theme(panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.major.x = element_blank())
+
+```
+
+:::
+
+
+:::
+:::
+
+::: {.grid}
+
+::: {.g-col-9}
+
+
+## Análise Temporal 
+
+- Ao analisar as séries temporais ao longo do tempo, observam-se tendências distintas para a Pesquisa Mensal da Indústria (PIM) e para a receita. A série da PIM apresenta uma tendência de baixa a partir do primeiro trimestre, seguida por um aumento a partir de agosto. Em contraste, a receita mostra uma tendência de alta contínua ao longo do ano, com uma média que, embora varie, demonstra uma menor amplitude de variação.
+
+- No final do ano, observa-se um aumento significativo na receita, o que pode ser explicado pelo incremento natural da demanda durante esse período. Esse comportamento sazonal é comum e reflete o aumento das compras de fim de ano, que geralmente impulsiona as vendas e a receita.
+
+
+::: panel-tabset
+
+### Decomposição da PIM 
+
+"<img src ='decom_pim.png' height='300'>
+
+### Decomposição da Receita
+
+"<img src ='decom_rec.png' height='300'>
+
+### Efeito Sazonal na PIM
+
+"<img src ='sazon_pim.png' height='300'>
+
+
+:::
+:::
+:::
+
+
+

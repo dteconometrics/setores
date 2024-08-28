@@ -1,0 +1,9 @@
+/* Ajusta o tamanho da fonte do índice */
+  nav[role="doc-toc"] {
+    font-size: 4.0em;  /* Aumenta o tamanho da fonte */
+  }
+
+/* Ajusta o tamanho dos itens de níveis mais profundos */
+  nav[role="doc-toc"] ul ul {
+    font-size: 4.0em;  /* Tamanho da fonte para sub-níveis */
+  }
