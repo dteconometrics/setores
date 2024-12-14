@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -30,10 +30,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="analise_setores_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="analise_setores_files/libs/quarto-html/anchor.min.js"></script>
 <link href="analise_setores_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="analise_setores_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="analise_setores_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="analise_setores_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="analise_setores_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="analise_setores_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="analise_setores_files/libs/bootstrap/bootstrap-6c387b63f653515b685461b694dc8f25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 <link rel="stylesheet" href="styles.css">
@@ -48,15 +48,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a></li>
-  <li><a href="#setores-nacional" id="toc-setores-nacional" class="nav-link" data-scroll-target="#setores-nacional">Setores Nacional</a></li>
-  <li><a href="#setores-estaduais" id="toc-setores-estaduais" class="nav-link" data-scroll-target="#setores-estaduais">Setores Estaduais</a>
-  <ul class="collapse">
-  <li><a href="#setores-na-pim" id="toc-setores-na-pim" class="nav-link" data-scroll-target="#setores-na-pim">Setores Na Pim</a></li>
-  <li><a href="#setores-na-pms" id="toc-setores-na-pms" class="nav-link" data-scroll-target="#setores-na-pms">Setores na PMS</a></li>
-  <li><a href="#setores-na-pmc" id="toc-setores-na-pmc" class="nav-link" data-scroll-target="#setores-na-pmc">Setores na PMC</a></li>
-  <li><a href="#pib-estadual" id="toc-pib-estadual" class="nav-link" data-scroll-target="#pib-estadual">PIB estadual</a></li>
-  </ul></li>
   <li><a href="#análise-temporal" id="toc-análise-temporal" class="nav-link" data-scroll-target="#análise-temporal">Análise Temporal</a></li>
+  <li><a href="#análise-temporal-1" id="toc-análise-temporal-1" class="nav-link" data-scroll-target="#análise-temporal-1">Análise Temporal</a></li>
   </ul>
 </nav>
 </div>
@@ -64,17 +57,17 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><img src="logo2.png" height="60"> Relatório: Análise Dos Setores</h1>
+<h1 class="title"><img src="logo.png" height="60"> Relatório: Análise Dos Setores</h1>
 </div>
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Autor</div>
     <div class="quarto-title-meta-contents">
-             <p>Núcleo de Dados <br><span style="font-size: 110%;">ADEPE<br><a href="https://github.com/dteconometrics"><svg aria-hidden="true" role="img" viewbox="0 0 496 512" style="height:1em;width:0.97em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/"><svg aria-hidden="true" role="img" viewbox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a>&nbsp; <a href="mailto:vinicius.valenca@adepe.pe.gov.br"><svg aria-hidden="true" role="img" viewbox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"></path></svg></a>&nbsp; <a href="https://www.adepe.pe.gov.br/"><svg aria-hidden="true" role="img" viewbox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"></path></svg></a></span> </p>
+             <p>Núcleo de Dados <br><span style="font-size: 110%;">ADEPE<br><a href="https://github.com/dteconometrics"><svg aria-hidden="true" role="img" viewbox="0 0 496 512" style="height:1em;width:0.97em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/"><svg aria-hidden="true" role="img" viewbox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a>&nbsp; <a href="mailto:vinicius.valenca75@gmail.com"><svg aria-hidden="true" role="img" viewbox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"></path></svg></a>&nbsp; <a href="https://www.adepe.pe.gov.br/"><svg aria-hidden="true" role="img" viewbox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"></path></svg></a></span> </p>
           </div>
   </div>
     
@@ -89,7 +82,9 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
+
 
 <div class="grid">
 <section id="introdução" class="level2 g-col-9">
@@ -112,22 +107,21 @@ Nota
 </div>
 </section>
 </div>
-<div class="grid">
-<section id="setores-nacional" class="level2 g-col-9">
-<h2 class="anchored" data-anchor-id="setores-nacional">Setores Nacional</h2>
+<section id="análise-temporal" class="level2">
+<h2 class="anchored" data-anchor-id="análise-temporal">Análise Temporal</h2>
 <ul>
-<li><p>Iniciando pelos resultados macroeconômicos, analisados a partir das Contas Nacionais Trimestrais (CNT), é possível observar o crescimento do PIB nacional e identificar quais setores se destacaram. No acumulado do período analisado, além do crescimento significativo da agropecuária e da indústria extrativa, os setores de serviços, como comércio e exportação de bens e serviços, também apresentaram desempenhos notáveis.</p></li>
-<li><p>No entanto, alguns setores nacionais apresentaram resultados negativos no acumulado. A construção civil registrou uma queda de -0,30%, a indústria de transformação teve um crescimento modesto de 0,63%, e a Formação Bruta de Capital Físico (FBCF) caiu significativamente, com uma redução de -2,69%</p></li>
+<li><p>Ao analisar as séries temporais ao longo do tempo, observam-se tendências distintas para a Pesquisa Mensal da Indústria (PIM) e para a receita. A série da PIM apresenta uma tendência de baixa a partir do primeiro trimestre, seguida por um aumento a partir de agosto. Em contraste, a receita mostra uma tendência de alta contínua ao longo do ano, com uma média que, embora varie, demonstra uma menor amplitude de variação.</p></li>
+<li><p>No final do ano, observa-se um aumento significativo na receita, o que pode ser explicado pelo incremento natural da demanda durante esse período. Esse comportamento sazonal é comum e reflete o aumento das compras de fim de ano, que geralmente impulsiona as vendas e a receita.</p></li>
 </ul>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Componentes do PIB</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Componentes do PIB (2)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Cancelamento por Estado</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Decomposição da Receita</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Efeito Sazonal na PIM</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -138,36 +132,33 @@ Nota
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+
+</div>
 </div>
 </div>
 </section>
-</div>
-<div class="grid">
-<section id="setores-estaduais" class="level2 g-col-9">
-<h2 class="anchored" data-anchor-id="setores-estaduais">Setores Estaduais</h2>
+<section id="análise-temporal-1" class="level2">
+<h2 class="anchored" data-anchor-id="análise-temporal-1">Análise Temporal</h2>
 <ul>
-<li>Para entender como os resultados se comportaram dentro do estado, foram utilizadas as Pesquisas Mensais do IBGE, incluindo a Pesquisa Industrial Mensal (PIM), a Pesquisa Mensal de Serviços (PMS), e a Pesquisa Mensal do Comércio (PMC), além do resultado do PIB estadual, também disponibilizado pelo IBGE. No entanto, é importante notar que os dados do PIB estadual possuem uma defasagem de dois anos.</li>
+<li>Aqui Vem o Texto</li>
 </ul>
-<section id="setores-na-pim" class="level3">
-<h3 class="anchored" data-anchor-id="setores-na-pim">Setores Na Pim</h3>
-<ul>
-<li>Os resultados dos setores apresentados a seguir referem-se à variação interanual. Nesta análise, não foi considerado o desempenho do mês imediatamente anterior (na margem), devido à alta sazonalidade. Entre os setores que se destacaram, estão a fabricação de bebidas, com um crescimento de 6,5%, metalurgia, com 6,15%, e a fabricação de produtos de metal, exceto equipamentos, que apresentou um expressivo aumento de 39%.</li>
-</ul>
+<p>-Aqui vem o TeXTO</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Setores da Pim (1)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Setores da Pim (2)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Cancelamento por Estado</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Decomposição da Receita</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Efeito Sazonal na PIM</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -178,228 +169,18 @@ Nota
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-</div>
-</div>
-</section>
-<section id="setores-na-pms" class="level3">
-<h3 class="anchored" data-anchor-id="setores-na-pms">Setores na PMS</h3>
-<ul>
-<li>Com essa métrica, é possível analisar o quanto determinado setor aumentou sua receita e volume de vendas ao longo do ano. Do lado da receita, todos os setores apresentaram crescimento em relação ao mesmo período do ano anterior, com destaque para os serviços profissionais, que registraram um aumento de 18%, e os serviços de informação, com um crescimento de 12%. Quanto ao volume de vendas, os destaques também vão para esses setores, com aumentos de 11% e aproximadamente 9%, respectivamente.</li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Receita</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Volume</a></li></ul>
-<div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+
 </div>
 </div>
 </div>
 </section>
-<section id="setores-na-pmc" class="level3">
-<h3 class="anchored" data-anchor-id="setores-na-pmc">Setores na PMC</h3>
-<ul>
-<li>A Pesquisa Mensal do Comércio (PMC) revelou variações diversas entre os setores (variação anual). Veículos, motocicletas, partes e peças lideraram com crescimento expressivo de 18% em volume de vendas e 19% em receita. Artigos farmacêuticos e livros, jornais e papelaria também se destacaram com aumentos significativos. Por outro lado, equipamentos de informática enfrentaram a maior queda, com uma redução de cerca de 27% tanto em volume quanto em receita. Setores como hipermercados e supermercados e combustíveis e lubrificantes mostraram crescimento moderado, enquanto tecidos, vestuário e calçados e material de construção registraram quedas.</li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">Variação anual (1)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Variação Anual (2)</a></li></ul>
-<div class="tab-content">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<caption>Variação anual por Setor tabela 1</caption>
-<colgroup>
-<col style="width: 12%">
-<col style="width: 70%">
-<col style="width: 9%">
-<col style="width: 8%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">Data</th>
-<th style="text-align: center;">Setor</th>
-<th style="text-align: center;">Receita</th>
-<th style="text-align: center;">Volume</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Livros, jornais, revistas e papelaria</td>
-<td style="text-align: center;">11.3</td>
-<td style="text-align: center;">3.7</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Equipamentos e materiais para escritório, informática e comunicação</td>
-<td style="text-align: center;">-27.7</td>
-<td style="text-align: center;">-27.1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Outros artigos de uso pessoal e doméstico</td>
-<td style="text-align: center;">8.7</td>
-<td style="text-align: center;">5.2</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Veículos, motocicletas, partes e peças</td>
-<td style="text-align: center;">18.0</td>
-<td style="text-align: center;">19.0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Material de construção</td>
-<td style="text-align: center;">-2.2</td>
-<td style="text-align: center;">-1.1</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Atacado especializado em produtos alimentícios, bebidas e fumo</td>
-<td style="text-align: center;">8.8</td>
-<td style="text-align: center;">5.4</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<table class="table table-sm table-striped small">
-<caption>Variação Anual por Setor tabela 2</caption>
-<colgroup>
-<col style="width: 11%">
-<col style="width: 71%">
-<col style="width: 8%">
-<col style="width: 7%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">Data</th>
-<th style="text-align: center;">Setor</th>
-<th style="text-align: center;">Receita</th>
-<th style="text-align: center;">Volume</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Hipermercados e supermercados</td>
-<td style="text-align: center;">7.4</td>
-<td style="text-align: center;">7.0</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Tecidos, vestuário e calçados</td>
-<td style="text-align: center;">-5.6</td>
-<td style="text-align: center;">-7.8</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Móveis e eletrodomésticos</td>
-<td style="text-align: center;">0.7</td>
-<td style="text-align: center;">3.3</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Móveis</td>
-<td style="text-align: center;">-1.3</td>
-<td style="text-align: center;">-1.7</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Eletrodomésticos</td>
-<td style="text-align: center;">1.4</td>
-<td style="text-align: center;">5.0</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">2024-06-01</td>
-<td style="text-align: center;">Artigos farmacêuticos, médicos, ortopédicos, de perfumaria e cosméticos</td>
-<td style="text-align: center;">9.5</td>
-<td style="text-align: center;">2.6</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="pib-estadual" class="level3">
-<h3 class="anchored" data-anchor-id="pib-estadual">PIB estadual</h3>
-<ul>
-<li>Durante os períodos analisados no gráfico, a participação do setor de Serviços no PIB pernambucano caiu de 50,83% em 2019 para 48% em 2021. Por outro lado, o setor Agropecuário aumentou sua participação de 4,47% em 2019 para 5,17% em 2020, embora tenha sofrido uma leve redução em 2021. A Indústria apresentou um crescimento constante, passando de 19,74% para 21,89% no mesmo período. O setor Administrativo teve um aumento inicial, mas sua participação caiu de 24,96% em 2019 para 24,38% em 2021</li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">Setores</a></li></ul>
-<div class="tab-content">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="analise_setores_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-</section>
-</div>
-<div class="grid">
-<section id="análise-temporal" class="level2 g-col-9">
-<h2 class="anchored" data-anchor-id="análise-temporal">Análise Temporal</h2>
-<ul>
-<li><p>Ao analisar as séries temporais ao longo do tempo, observam-se tendências distintas para a Pesquisa Mensal da Indústria (PIM) e para a receita. A série da PIM apresenta uma tendência de baixa a partir do primeiro trimestre, seguida por um aumento a partir de agosto. Em contraste, a receita mostra uma tendência de alta contínua ao longo do ano, com uma média que, embora varie, demonstra uma menor amplitude de variação.</p></li>
-<li><p>No final do ano, observa-se um aumento significativo na receita, o que pode ser explicado pelo incremento natural da demanda durante esse período. Esse comportamento sazonal é comum e reflete o aumento das compras de fim de ano, que geralmente impulsiona as vendas e a receita.</p></li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">Decomposição da PIM</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Decomposição da Receita</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Efeito Sazonal na PIM</a></li></ul>
-<div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<p>“<img src="decom_pim.png" height="300"></p>
-</div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
-<p>“<img src="decom_rec.png" height="300"></p>
-</div>
-<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
-<p>“<img src="sazon_pim.png" height="300"></p>
-</div>
-</div>
-</div>
-</section>
-</div>
 
 </main>
 <!-- /main column -->
@@ -438,18 +219,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -481,11 +251,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -495,8 +302,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -508,7 +324,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -552,6 +490,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -577,6 +516,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -637,6 +602,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 
