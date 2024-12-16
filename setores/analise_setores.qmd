@@ -1,7 +1,7 @@
 ---
-title: " <img src ='logo.png' height='60'> Relatório Tecnico:churn de Clientes"
-author: 'Vinicius Limeira <br><span style = "font-size: 110%;">ADEPE<br><a href="https://github.com/dteconometrics">`r fontawesome::fa("github", fill = "#282f6b")`</a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/">`r fontawesome::fa("linkedin", fill = "#282f6b")`</a>&nbsp; <a href="mailto:vinicius.valenca75@gmail.com">`r fontawesome::fa("envelope", fill = "#282f6b")`</a>&nbsp; <a href="https://www.adepe.pe.gov.br/">`r fontawesome::fa("home", fill = "#282f6b")`</a></span>'
-date: "2024-08-28"
+title: " <img src ='logo.png' height='60'> Relatório técnico:Previsão de Churn"
+author: 'Vinicius Limeira <br><span style = "font-size: 110%;"><br><a href="https://github.com/dteconometrics">`r fontawesome::fa("github", fill = "#282f6b")`</a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/">`r fontawesome::fa("linkedin", fill = "#282f6b")`</a>&nbsp; <a href="mailto:vinicius.valenca75@gmail.com">`r fontawesome::fa("envelope", fill = "#282f6b")`</a>&nbsp; <a href="https://quarto.org/">`r fontawesome::fa("home", fill = "#282f6b")`</a></span>'
+date: "2024-12-17"
 lang: pt
 format: 
   html:
@@ -60,7 +60,6 @@ colours <- c("#428953", "#CE2929", "#A3DD57", "#77E599","#5774dd", "#c0c4d1", "#
 ```
 
 
-
 ::: {.grid}
 
 ::: {.g-col-9}
@@ -68,7 +67,13 @@ colours <- c("#428953", "#CE2929", "#A3DD57", "#77E599","#5774dd", "#c0c4d1", "#
 
 ## Introdução 
 
-- Este relatório tem como objetivo analisar a evolução dos setores econômicos a partir das pesquisas divulgadas pelo IBGE. Busca-se observar a evolução desses setores ao longo do tempo, bem como as tendências das variáveis associadas. Além da análise setorial, também será explorada a série temporal da Pesquisa Industrial Mensal (PIM) e da Pesquisa Mensal de Serviços (PMS), com o intuito de identificar o impacto das tendências sazonais sobre essas séries  
+O estudo teve como foco atender aos seguintes objetivos estratégicos:
+
+- Identificar os principais motivos do churn: Determinar os fatores que levam os clientes a cancelar seus contratos.
+
+- Segmentar os clientes com base no risco de churn: Criar categorias de clientes de acordo com sua propensão ao churn.
+
+- Propor estratégias eficazes para reduzir o churn: Recomendar ações práticas e orientadas por dados para melhorar a retenção de clientes.
 
 ::: {.callout-note}
  
@@ -79,56 +84,172 @@ colours <- c("#428953", "#CE2929", "#A3DD57", "#77E599","#5774dd", "#c0c4d1", "#
 :::
 
 
+::: {.g-col-9}
+
+# Metodologia 
+
+O estudo teve como foco atender aos seguintes objetivos estratégicos:
+
+- Identificar os principais motivos do churn: Determinar os fatores que levam os clientes a cancelar seus contratos.
+
+- Segmentar os clientes com base no risco de churn: Criar categorias de clientes de acordo com sua propensão ao churn.
+
+- Propor estratégias eficazes para reduzir o churn: Recomendar ações práticas e orientadas por dados para melhorar a retenção de clientes.
+
+### Tratamento dos Dados
+
+- O objetivo desta etapa foi garantir a consistência e a qualidade do dataset, tratando valores ausentes, eliminando inconsistências e ajustando os dados para análises exploratórias e modelagem preditiva.
+
+- O dataset utilizado, intitulado Base de Contratos.xlsx, contém 122.256 registros e 16 colunas, abrangendo informações de clientes, contratos, renovações, cancelamentos e engajamento com o aplicativo. Durante a inspeção inicial, foram identificados valores ausentes em várias colunas, como estado, consultor, e *data_do_pagamento*. Algumas inconsistências também foram encontradas, como valores irreais nas variáveis de duração de contratos
+
+#### Carregamento Inicial 
+
+- O dataset inicial possuía 122.256 registros e 16 colunas com informações de clientes, contratos, renovações, cancelamentos e engajamento com o aplicativo.
+Durante a inspeção inicial, foram identificados valores ausentes em diversas colunas, como estado (15.103 valores ausentes), consultor (98.446 valores ausentes), e data_do_pagamento (104.137 valores ausentes). Além disso, foram detectados valores inconsistentes em variáveis de duração de contratos e outros registros.
+
+#### Tratamento de Valores Ausentes
+
+- *Variáveis Categóricas:* Foram preenchidas com valores que representassem adequadamente a ausência de informações:
+filial_de_contratacao e estado: Substituídos por 'desconhecido'.
+consultor: Preenchido com 'nao_informado'.
+disponibilidade_do_servico: Substituído por 'nao_disponivel'.
+
+- *Variáveis Numéricas e Temporais:* Ajustadas conforme o contexto:
+data_do_pagamento e data_de_cancelamento foram utilizadas para criar variáveis indicadoras de status (e.g., pagamentos realizados ou cancelamentos).
+
+
+#### Criação de Novas Variáveis
+
+Com base nos ajustes realizados, foram criadas variáveis adicionais para facilitar a análise e modelagem:
+
+- Churn: Indicador binário que identifica se o cliente cancelou o contrato.
+
+- Engajamento: Variável que representa se o cliente acessou ou não o aplicativo durante a vigência do contrato.
+
+- Pagamentos: Variável que indica se houve registro de pagamento
+
+
+#### Resultado Final
+
+Após o tratamento, o dataset final apresenta as seguintes características: 
+
+- Tamanho: 122.256 registros e 16 colunas.
+
+- Principais Ajustes Realizados:
+ - Valores ausentes tratados e inconsistências corrigidas 
+ - Variáveis categóricas padronizadas
+ - Novas variáveis criadas para análise e modelagem preditiv
+
+
+
+## Análise Exploratória
+
+- A análise exploratória teve como finalidade identificar padrões, tendências e relações nos dados que possam ajudar a explicar o comportamento de churn dos clientes. Essa etapa também serviu para selecionar variáveis relevantes para a modelagem preditiva e identificar possíveis melhorias para o negócio.
+
+
+### Informações Retiradas 
+
+- Aproximadamente 25\% dos clientes cancelaram seus contratos, enquanto 74\% permaneceram ativos, totalizando 90.714 clientes que não cancelaram. Essa proporção indica que, embora a maior parte dos clientes tenha sido retida, a taxa de churn é significativa e requer ações imediatas.
+
+- O número de cancelamentos apresentou uma tendência crescente a partir de 2022, com um pico significativo em março de 2023, quando 2.173 contratos foram cancelados. O número de cancelamentos continuou a crescer, atingindo seu valor máximo em 2024. A média mensal de cancelamentos foi de 656 contratos. Esses números demonstram que o churn é um problema em expansão, impactando diretamente a receita da empresa.
+
+
+Entre os clientes que cancelaram seus contratos, os principais motivos registrados foram:
+
+- Falta de contato: Representou 40% dos cancelamentos, destacando a importância de um acompanhamento mais próximo dos clientes.
+
+- Desinteresse pelo serviço: Correspondeu a 34% dos cancelamentos, indicando a necessidade de melhorar a proposta de valor percebida pelos clientes.
+
+*Principais Insights* 
+
+- Proporção de Retenção: Apesar de 74% dos clientes ainda estarem ativos, o aumento contínuo no churn ameaça a sustentabilidade do negócio.
+
+- Tendências Temporais: O crescimento do churn, especialmente após 2022, reforça a urgência em implementar estratégias de retenção mais eficazes.
+Motivos Críticos:
+
+- A falta de contato com os clientes é o principal fator de churn, sugerindo oportunidades para melhorias nos processos de comunicação e acompanhamento.
+O desinteresse pelo serviço reflete a necessidade de ajustar os serviços oferecidos para atender melhor às expectativas dos clientes.
+
+::: {.callout-note}
+ 
+**Interaja clicando, para visualizar os resultado**
+
 :::
 
-## Análise Temporal 
-
-- Ao analisar as séries temporais ao longo do tempo, observam-se tendências distintas para a Pesquisa Mensal da Indústria (PIM) e para a receita. A série da PIM apresenta uma tendência de baixa a partir do primeiro trimestre, seguida por um aumento a partir de agosto. Em contraste, a receita mostra uma tendência de alta contínua ao longo do ano, com uma média que, embora varie, demonstra uma menor amplitude de variação.
-
-- No final do ano, observa-se um aumento significativo na receita, o que pode ser explicado pelo incremento natural da demanda durante esse período. Esse comportamento sazonal é comum e reflete o aumento das compras de fim de ano, que geralmente impulsiona as vendas e a receita.
-
+### Proporção e resultado ao longo do tempo 
 
 ::: panel-tabset
 
-### Cancelamento por Estado 
+#### Proporção de churn
 
 ```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
 
 
-knitr::include_graphics("cancelamento_estado.png")
+knitr::include_graphics("proporcao_churn.png")
 
 ```
 
 
-### Decomposição da Receita
+#### Distribuição
 
 ```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
 
 
-knitr::include_graphics("cancelamento_estado.png")
+knitr::include_graphics("distribuicao_churn.png")
+
+```
+
+#### Evolução 
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+
+knitr::include_graphics("evolucao.png")
+
+```
+
+:::
+
+### Resultado por Loja
+
+::: panel-tabset
+
+#### Cancelamento por loja
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+
+knitr::include_graphics("cancelamento_por_loja.png")
 
 ```
 
 
-### Efeito Sazonal na PIM
+#### Motivos de cancelamento
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
 
 
+knitr::include_graphics("motivos.png")
+
+```
+
+#### Proporção
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+
+knitr::include_graphics("proporcao.png")
+
+```
 
 
 :::
 
-## Análise Temporal 
-
-
-- Aqui Vem o Texto 
-
-
--Aqui vem o TeXTO 
-
+### Resultado por Estado
 
 ::: panel-tabset
 
-### Cancelamento por Estado 
+#### Cancelamento por estado
 
 ```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
 
@@ -138,20 +259,101 @@ knitr::include_graphics("cancelamento_estado.png")
 ```
 
 
-### Decomposição da Receita
+#### Taxa de cancelamento por estado
 
 ```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
 
 
-knitr::include_graphics("cancelamento_estado.png")
+knitr::include_graphics("taxa_por_estado.png")
 
 ```
 
 
-### Efeito Sazonal na PIM
+:::
 
 
 
+## Modelo Preditivo
+
+- O objetivo da modelagem preditiva foi identificar os clientes com maior probabilidade de churn nos próximos meses, permitindo que a empresa implemente ações proativas para reduzir o número de cancelamentos.
+
+#### Etapas da Modelagem
+
+- As variáveis preditoras foram selecionadas considerando aspectos como duração do contrato, engajamento com o aplicativo, disponibilidade do serviço, e histórico de pagamentos.
+Os dados foram tratados para corrigir valores ausentes, escalonados para padronização, e variáveis categóricas foram codificadas usando One-Hot Encoding.
+
+- O dataset foi balanceado com a técnica SMOTE, resultando em uma distribuição equilibrada entre as classes (churn = 1 e churn = 0), com 50\% para cada
+
+#### Modelo Preditivo 
+
+- A Regressão Logística foi utilizada como o modelo preditivo, devido à sua simplicidade, interpretabilidade e bom desempenho em problemas binários como o churn.
+
+- O modelo Logit (ou Regressão Logística) é um método estatístico amplamente utilizado para problemas de classificação binária, onde o objetivo é prever a probabilidade de um evento ocorrer ou não. Ele modela a relação entre uma variável dependente binária (neste caso, churn, que assume os valores 1 ou 0) e uma ou mais variáveis independentes (features ou preditores).
+
+O Logit usa a seguinte fórmula para estimar probabilidades:
+
+$$
+\hat{y} = \frac{1}{1 + e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2 + \dots + \beta_nx_n)}}
+$$
+\begin{itemize}
+    \item $\hat{y}$: é a probabilidade prevista de churn (ou qualquer evento de interesse).
+    \item $\beta_0$: é o intercepto do modelo.
+    \item $\beta_1, \beta_2, \dots, \beta_n$: são os coeficientes que representam o impacto das variáveis $x_1, x_2, \dots, x_n$ na probabilidade de churn.
+    \item $x_1, x_2, \dots, x_n$: são as variáveis preditoras.
+\end{itemize}
+
+
+#### Resultados do Modelo
+
+- O dataset foi dividido em treino (70%) e teste (30%).
+- O modelo foi treinado no conjunto balanceado e avaliado com métricas padrão da área:
+- AUC-ROC: 0,95 (excelente separação entre churn e não churn).
+- Precisão: 86%.
+- F1-Score: 88%.
+- RMSE (Erro Quadrático Médio): 0,29.
+
+- O modelo alcançou uma acurácia geral de 88\%, demonstrando alta capacidade preditiva.
+A matriz de confusão indicou uma boa identificação tanto de clientes propensos ao churn quanto dos que permaneceram.
+
+
+
+## Previsão fora da amostra 
+
+O modelo foi aplicado para prever a taxa de churn cumulativa em períodos futuros de 3, 6, 9 e 12 meses, considerando uma taxa inicial de churn de 25,8\%.
+
+
+| **Período (Meses)** | **Taxa de Churn Prevista (%)** |
+|----------------------|-------------------------------|
+| 3                   | 27,09                         |
+| 6                   | 28,38                         |
+| 9                   | 29,67                         |
+| 12                  | 30,96                         |
+|----------------------|-------------------------------|
+
+
+O aumento gradual na taxa de churn reforça a necessidade de ações preventivas para conter a escalada de cancelamentos.
+
+### Previsão fora da amostra 
+
+```{r, echo=F, eval=T, results='markup', fig.width=8, fig.height=4, fig.align='center', out.width="1\\linewidth", warning=FALSE, message=FALSE, size='tiny'}
+
+
+knitr::include_graphics("previsao.png")
+
+```
+
+
+
+
+
+## Conclusões e observações finais
+
+Os principais fatores associados ao churn foram o baixo engajamento no aplicativo, contratos curtos e problemas de disponibilidade do serviço. A previsão para os próximos 12 meses indica um aumento gradual da taxa de churn, reforçando a necessidade de ações imediatas.
+
+Próximos Passos para Aprimorar o Desempenho:
+
+Testar Random Forest ou Gradient Boosting para alcançar maior robustez e precisão preditiva.
+Implementar modelos ensemble, combinando diferentes algoritmos para aumentar a performance, alinhado às melhores práticas da literatura.
 
 :::
 
