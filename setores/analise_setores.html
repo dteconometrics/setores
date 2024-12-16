@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Núcleo de Dados  ADEPE &nbsp; &nbsp; &nbsp; ">
+<meta name="author" content="Vinicius Limeira   &nbsp; &nbsp; &nbsp; ">
 
-<title> Relatório: Análise Dos Setores</title>
+<title> Relatório técnico:Previsão de Churn</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -35,6 +35,35 @@ ul.task-list li input[type="checkbox"] {
 <link href="analise_setores_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="analise_setores_files/libs/bootstrap/bootstrap-6c387b63f653515b685461b694dc8f25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -42,39 +71,31 @@ ul.task-list li input[type="checkbox"] {
 <body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-full">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Índice</h2>
-   
-  <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a></li>
-  <li><a href="#análise-temporal" id="toc-análise-temporal" class="nav-link" data-scroll-target="#análise-temporal">Análise Temporal</a></li>
-  <li><a href="#análise-temporal-1" id="toc-análise-temporal-1" class="nav-link" data-scroll-target="#análise-temporal-1">Análise Temporal</a></li>
-  </ul>
-</nav>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+  
 </div>
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><img src="logo.png" height="60"> Relatório: Análise Dos Setores</h1>
+<h1 class="title"><img src="logo.png" height="60"> Relatório técnico:Previsão de Churn</h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-left">
+<div class="quarto-title-meta column-page">
 
     <div>
     <div class="quarto-title-meta-heading">Autor</div>
     <div class="quarto-title-meta-contents">
-             <p>Núcleo de Dados <br><span style="font-size: 110%;">ADEPE<br><a href="https://github.com/dteconometrics"><svg aria-hidden="true" role="img" viewbox="0 0 496 512" style="height:1em;width:0.97em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/"><svg aria-hidden="true" role="img" viewbox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a>&nbsp; <a href="mailto:vinicius.valenca75@gmail.com"><svg aria-hidden="true" role="img" viewbox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"></path></svg></a>&nbsp; <a href="https://www.adepe.pe.gov.br/"><svg aria-hidden="true" role="img" viewbox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"></path></svg></a></span> </p>
+             <p>Vinicius Limeira <br><span style="font-size: 110%;"><br><a href="https://github.com/dteconometrics"><svg aria-hidden="true" role="img" viewbox="0 0 496 512" style="height:1em;width:0.97em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a>&nbsp; <a href="https://www.linkedin.com/in/vinicius-limeira-565117180/"><svg aria-hidden="true" role="img" viewbox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a>&nbsp; <a href="mailto:vinicius.valenca75@gmail.com"><svg aria-hidden="true" role="img" viewbox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"></path></svg></a>&nbsp; <a href="https://quarto.org/"><svg aria-hidden="true" role="img" viewbox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#282f6b;overflow:visible;position:relative;"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"></path></svg></a></span> </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Data de Publicação</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">28 de agosto de 2024</p>
+      <p class="date">17 de dezembro de 2024</p>
     </div>
   </div>
   
@@ -89,8 +110,11 @@ ul.task-list li input[type="checkbox"] {
 <div class="grid">
 <section id="introdução" class="level2 g-col-9">
 <h2 class="anchored" data-anchor-id="introdução">Introdução</h2>
+<p>O estudo teve como foco atender aos seguintes objetivos estratégicos:</p>
 <ul>
-<li>Este relatório tem como objetivo analisar a evolução dos setores econômicos a partir das pesquisas divulgadas pelo IBGE. Busca-se observar a evolução desses setores ao longo do tempo, bem como as tendências das variáveis associadas. Além da análise setorial, também será explorada a série temporal da Pesquisa Industrial Mensal (PIM) e da Pesquisa Mensal de Serviços (PMS), com o intuito de identificar o impacto das tendências sazonais sobre essas séries</li>
+<li><p>Identificar os principais motivos do churn: Determinar os fatores que levam os clientes a cancelar seus contratos.</p></li>
+<li><p>Segmentar os clientes com base no risco de churn: Criar categorias de clientes de acordo com sua propensão ao churn.</p></li>
+<li><p>Propor estratégias eficazes para reduzir o churn: Recomendar ações práticas e orientadas por dados para melhorar a retenção de clientes.</p></li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -106,22 +130,101 @@ Nota
 </div>
 </div>
 </section>
-</div>
-<section id="análise-temporal" class="level2">
-<h2 class="anchored" data-anchor-id="análise-temporal">Análise Temporal</h2>
+<section id="metodologia" class="level1 g-col-9">
+<h1>Metodologia</h1>
+<p>O estudo teve como foco atender aos seguintes objetivos estratégicos:</p>
 <ul>
-<li><p>Ao analisar as séries temporais ao longo do tempo, observam-se tendências distintas para a Pesquisa Mensal da Indústria (PIM) e para a receita. A série da PIM apresenta uma tendência de baixa a partir do primeiro trimestre, seguida por um aumento a partir de agosto. Em contraste, a receita mostra uma tendência de alta contínua ao longo do ano, com uma média que, embora varie, demonstra uma menor amplitude de variação.</p></li>
-<li><p>No final do ano, observa-se um aumento significativo na receita, o que pode ser explicado pelo incremento natural da demanda durante esse período. Esse comportamento sazonal é comum e reflete o aumento das compras de fim de ano, que geralmente impulsiona as vendas e a receita.</p></li>
+<li><p>Identificar os principais motivos do churn: Determinar os fatores que levam os clientes a cancelar seus contratos.</p></li>
+<li><p>Segmentar os clientes com base no risco de churn: Criar categorias de clientes de acordo com sua propensão ao churn.</p></li>
+<li><p>Propor estratégias eficazes para reduzir o churn: Recomendar ações práticas e orientadas por dados para melhorar a retenção de clientes.</p></li>
 </ul>
+<section id="tratamento-dos-dados" class="level3">
+<h3 class="anchored" data-anchor-id="tratamento-dos-dados">Tratamento dos Dados</h3>
+<ul>
+<li><p>O objetivo desta etapa foi garantir a consistência e a qualidade do dataset, tratando valores ausentes, eliminando inconsistências e ajustando os dados para análises exploratórias e modelagem preditiva.</p></li>
+<li><p>O dataset utilizado, intitulado Base de Contratos.xlsx, contém 122.256 registros e 16 colunas, abrangendo informações de clientes, contratos, renovações, cancelamentos e engajamento com o aplicativo. Durante a inspeção inicial, foram identificados valores ausentes em várias colunas, como estado, consultor, e <em>data_do_pagamento</em>. Algumas inconsistências também foram encontradas, como valores irreais nas variáveis de duração de contratos</p></li>
+</ul>
+<section id="carregamento-inicial" class="level4">
+<h4 class="anchored" data-anchor-id="carregamento-inicial">Carregamento Inicial</h4>
+<ul>
+<li>O dataset inicial possuía 122.256 registros e 16 colunas com informações de clientes, contratos, renovações, cancelamentos e engajamento com o aplicativo. Durante a inspeção inicial, foram identificados valores ausentes em diversas colunas, como estado (15.103 valores ausentes), consultor (98.446 valores ausentes), e data_do_pagamento (104.137 valores ausentes). Além disso, foram detectados valores inconsistentes em variáveis de duração de contratos e outros registros.</li>
+</ul>
+</section>
+<section id="tratamento-de-valores-ausentes" class="level4">
+<h4 class="anchored" data-anchor-id="tratamento-de-valores-ausentes">Tratamento de Valores Ausentes</h4>
+<ul>
+<li><p><em>Variáveis Categóricas:</em> Foram preenchidas com valores que representassem adequadamente a ausência de informações: filial_de_contratacao e estado: Substituídos por ‘desconhecido’. consultor: Preenchido com ‘nao_informado’. disponibilidade_do_servico: Substituído por ‘nao_disponivel’.</p></li>
+<li><p><em>Variáveis Numéricas e Temporais:</em> Ajustadas conforme o contexto: data_do_pagamento e data_de_cancelamento foram utilizadas para criar variáveis indicadoras de status (e.g., pagamentos realizados ou cancelamentos).</p></li>
+</ul>
+</section>
+<section id="criação-de-novas-variáveis" class="level4">
+<h4 class="anchored" data-anchor-id="criação-de-novas-variáveis">Criação de Novas Variáveis</h4>
+<p>Com base nos ajustes realizados, foram criadas variáveis adicionais para facilitar a análise e modelagem:</p>
+<ul>
+<li><p>Churn: Indicador binário que identifica se o cliente cancelou o contrato.</p></li>
+<li><p>Engajamento: Variável que representa se o cliente acessou ou não o aplicativo durante a vigência do contrato.</p></li>
+<li><p>Pagamentos: Variável que indica se houve registro de pagamento</p></li>
+</ul>
+</section>
+<section id="resultado-final" class="level4">
+<h4 class="anchored" data-anchor-id="resultado-final">Resultado Final</h4>
+<p>Após o tratamento, o dataset final apresenta as seguintes características:</p>
+<ul>
+<li><p>Tamanho: 122.256 registros e 16 colunas.</p></li>
+<li><p>Principais Ajustes Realizados:</p></li>
+<li><p>Valores ausentes tratados e inconsistências corrigidas</p></li>
+<li><p>Variáveis categóricas padronizadas</p></li>
+<li><p>Novas variáveis criadas para análise e modelagem preditiv</p></li>
+</ul>
+</section>
+</section>
+<section id="análise-exploratória" class="level2">
+<h2 class="anchored" data-anchor-id="análise-exploratória">Análise Exploratória</h2>
+<ul>
+<li>A análise exploratória teve como finalidade identificar padrões, tendências e relações nos dados que possam ajudar a explicar o comportamento de churn dos clientes. Essa etapa também serviu para selecionar variáveis relevantes para a modelagem preditiva e identificar possíveis melhorias para o negócio.</li>
+</ul>
+<section id="informações-retiradas" class="level3">
+<h3 class="anchored" data-anchor-id="informações-retiradas">Informações Retiradas</h3>
+<ul>
+<li><p>Aproximadamente 25% dos clientes cancelaram seus contratos, enquanto 74% permaneceram ativos, totalizando 90.714 clientes que não cancelaram. Essa proporção indica que, embora a maior parte dos clientes tenha sido retida, a taxa de churn é significativa e requer ações imediatas.</p></li>
+<li><p>O número de cancelamentos apresentou uma tendência crescente a partir de 2022, com um pico significativo em março de 2023, quando 2.173 contratos foram cancelados. O número de cancelamentos continuou a crescer, atingindo seu valor máximo em 2024. A média mensal de cancelamentos foi de 656 contratos. Esses números demonstram que o churn é um problema em expansão, impactando diretamente a receita da empresa.</p></li>
+</ul>
+<p>Entre os clientes que cancelaram seus contratos, os principais motivos registrados foram:</p>
+<ul>
+<li><p>Falta de contato: Representou 40% dos cancelamentos, destacando a importância de um acompanhamento mais próximo dos clientes.</p></li>
+<li><p>Desinteresse pelo serviço: Correspondeu a 34% dos cancelamentos, indicando a necessidade de melhorar a proposta de valor percebida pelos clientes.</p></li>
+</ul>
+<p><em>Principais Insights</em></p>
+<ul>
+<li><p>Proporção de Retenção: Apesar de 74% dos clientes ainda estarem ativos, o aumento contínuo no churn ameaça a sustentabilidade do negócio.</p></li>
+<li><p>Tendências Temporais: O crescimento do churn, especialmente após 2022, reforça a urgência em implementar estratégias de retenção mais eficazes. Motivos Críticos:</p></li>
+<li><p>A falta de contato com os clientes é o principal fator de churn, sugerindo oportunidades para melhorias nos processos de comunicação e acompanhamento. O desinteresse pelo serviço reflete a necessidade de ajustar os serviços oferecidos para atender melhor às expectativas dos clientes.</p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nota
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Interaja clicando, para visualizar os resultado</strong></p>
+</div>
+</div>
+</section>
+<section id="proporção-e-resultado-ao-longo-do-tempo" class="level3">
+<h3 class="anchored" data-anchor-id="proporção-e-resultado-ao-longo-do-tempo">Proporção e resultado ao longo do tempo</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Cancelamento por Estado</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Decomposição da Receita</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Efeito Sazonal na PIM</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Proporção de churn</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Distribuição</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Evolução</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+<p><img src="proporcao_churn.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -132,33 +235,37 @@ Nota
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+<p><img src="distribuicao_churn.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="evolucao.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </section>
-<section id="análise-temporal-1" class="level2">
-<h2 class="anchored" data-anchor-id="análise-temporal-1">Análise Temporal</h2>
-<ul>
-<li>Aqui Vem o Texto</li>
-</ul>
-<p>-Aqui vem o TeXTO</p>
+<section id="resultado-por-loja" class="level3">
+<h3 class="anchored" data-anchor-id="resultado-por-loja">Resultado por Loja</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Cancelamento por Estado</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Decomposição da Receita</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Efeito Sazonal na PIM</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Cancelamento por loja</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Motivos de cancelamento</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Proporção</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+<p><img src="cancelamento_por_loja.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -169,18 +276,148 @@ Nota
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+<p><img src="motivos.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
-
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="proporcao.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </section>
+<section id="resultado-por-estado" class="level3">
+<h3 class="anchored" data-anchor-id="resultado-por-estado">Resultado por Estado</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">Cancelamento por estado</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Taxa de cancelamento por estado</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cancelamento_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="taxa_por_estado.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="modelo-preditivo" class="level2">
+<h2 class="anchored" data-anchor-id="modelo-preditivo">Modelo Preditivo</h2>
+<ul>
+<li>O objetivo da modelagem preditiva foi identificar os clientes com maior probabilidade de churn nos próximos meses, permitindo que a empresa implemente ações proativas para reduzir o número de cancelamentos.</li>
+</ul>
+<section id="etapas-da-modelagem" class="level4">
+<h4 class="anchored" data-anchor-id="etapas-da-modelagem">Etapas da Modelagem</h4>
+<ul>
+<li><p>As variáveis preditoras foram selecionadas considerando aspectos como duração do contrato, engajamento com o aplicativo, disponibilidade do serviço, e histórico de pagamentos. Os dados foram tratados para corrigir valores ausentes, escalonados para padronização, e variáveis categóricas foram codificadas usando One-Hot Encoding.</p></li>
+<li><p>O dataset foi balanceado com a técnica SMOTE, resultando em uma distribuição equilibrada entre as classes (churn = 1 e churn = 0), com 50% para cada</p></li>
+</ul>
+</section>
+<section id="modelo-preditivo-1" class="level4">
+<h4 class="anchored" data-anchor-id="modelo-preditivo-1">Modelo Preditivo</h4>
+<ul>
+<li><p>A Regressão Logística foi utilizada como o modelo preditivo, devido à sua simplicidade, interpretabilidade e bom desempenho em problemas binários como o churn.</p></li>
+<li><p>O modelo Logit (ou Regressão Logística) é um método estatístico amplamente utilizado para problemas de classificação binária, onde o objetivo é prever a probabilidade de um evento ocorrer ou não. Ele modela a relação entre uma variável dependente binária (neste caso, churn, que assume os valores 1 ou 0) e uma ou mais variáveis independentes (features ou preditores).</p></li>
+</ul>
+<p>O Logit usa a seguinte fórmula para estimar probabilidades:</p>
+<span class="math display">\[
+\hat{y} = \frac{1}{1 + e^{-(\beta_0 + \beta_1x_1 + \beta_2x_2 + \dots + \beta_nx_n)}}
+\]</span>
+</section>
+<section id="resultados-do-modelo" class="level4">
+<h4 class="anchored" data-anchor-id="resultados-do-modelo">Resultados do Modelo</h4>
+<ul>
+<li><p>O dataset foi dividido em treino (70%) e teste (30%).</p></li>
+<li><p>O modelo foi treinado no conjunto balanceado e avaliado com métricas padrão da área:</p></li>
+<li><p>AUC-ROC: 0,95 (excelente separação entre churn e não churn).</p></li>
+<li><p>Precisão: 86%.</p></li>
+<li><p>F1-Score: 88%.</p></li>
+<li><p>RMSE (Erro Quadrático Médio): 0,29.</p></li>
+<li><p>O modelo alcançou uma acurácia geral de 88%, demonstrando alta capacidade preditiva. A matriz de confusão indicou uma boa identificação tanto de clientes propensos ao churn quanto dos que permaneceram.</p></li>
+</ul>
+</section>
+</section>
+<section id="previsão-fora-da-amostra" class="level2">
+<h2 class="anchored" data-anchor-id="previsão-fora-da-amostra">Previsão fora da amostra</h2>
+<p>O modelo foi aplicado para prever a taxa de churn cumulativa em períodos futuros de 3, 6, 9 e 12 meses, considerando uma taxa inicial de churn de 25,8%.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Período (Meses)</strong></th>
+<th><strong>Taxa de Churn Prevista (%)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td>27,09</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>28,38</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>29,67</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>30,96</td>
+</tr>
+<tr class="odd">
+<td>———————-</td>
+<td>——————————-</td>
+</tr>
+</tbody>
+</table>
+<p>O aumento gradual na taxa de churn reforça a necessidade de ações preventivas para conter a escalada de cancelamentos.</p>
+<section id="previsão-fora-da-amostra-1" class="level3">
+<h3 class="anchored" data-anchor-id="previsão-fora-da-amostra-1">Previsão fora da amostra</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="previsao.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusões-e-observações-finais" class="level2">
+<h2 class="anchored" data-anchor-id="conclusões-e-observações-finais">Conclusões e observações finais</h2>
+<p>Os principais fatores associados ao churn foram o baixo engajamento no aplicativo, contratos curtos e problemas de disponibilidade do serviço. A previsão para os próximos 12 meses indica um aumento gradual da taxa de churn, reforçando a necessidade de ações imediatas.</p>
+<p>Próximos Passos para Aprimorar o Desempenho:</p>
+<p>Testar Random Forest ou Gradient Boosting para alcançar maior robustez e precisão preditiva. Implementar modelos ensemble, combinando diferentes algoritmos para aumentar a performance, alinhado às melhores práticas da literatura.</p>
+</section>
+</section>
+</div>
 
 </main>
 <!-- /main column -->
